@@ -13,18 +13,27 @@
         int  tz_dsttime;
     };
 
+    // int gettimeofday(struct timeval *tv, struct timezone *tz)
+    // {
+    //     FILETIME ft;
+    //     GetSystemTimeAsFileTime(&ft);
+    //     unsigned long long t = ft.dwHighDateTime;
+    //     t <<= 32;
+    //     t |= ft.dwLowDateTime;
+    //     t /= 10;
+    //     t -= 11644473600000000ULL;
+    //     tv->tv_sec = (long) (t / 1000000UL);
+    //     tv->tv_usec = (long) (t % 1000000UL);
+
+    //     return 0;
+    // }
+
     int gettimeofday(struct timeval *tv, struct timezone *tz)
     {
-        FILETIME ft;
-        GetSystemTimeAsFileTime(&ft);
-        unsigned long long t = ft.dwHighDateTime;
-        t <<= 32;
-        t |= ft.dwLowDateTime;
-        t /= 10;
-        t -= 11644473600000000ULL;
-        tv->tv_sec = (long) (t / 1000000UL);
-        tv->tv_usec = (long) (t % 1000000UL);
-
+        struct timeb t;
+        ftime(&t);
+        tv->tv_sec = (long) t.time;
+        tv->tv_usec = t.millitm * 1000UL;
         return 0;
     }
 #else
